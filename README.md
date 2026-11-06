@@ -1,2 +1,2 @@
-# CS415Proj2
+# CS415Proj3_Tries
 Autocorrect Trie implementation 
