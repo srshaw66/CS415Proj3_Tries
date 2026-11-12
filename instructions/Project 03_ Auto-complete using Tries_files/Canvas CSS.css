@@ -1,0 +1,11 @@
+.email_meta{
+    Display:none; /* Hides the Set-as-default star by the emails. -Abbie */
+}
+
+select#default_email_id {
+    display: none !important; /* Gets rid of email selection box. -Abbie */
+}
+
+.profile_table.editing .default_email {
+    display: inline !important; /* Forces display of default email address. -Abbie */
+}

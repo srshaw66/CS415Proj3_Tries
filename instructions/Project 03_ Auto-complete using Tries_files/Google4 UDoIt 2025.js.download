@@ -1,0 +1,44 @@
+// GOOGLE TAG MANAGER CODE
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','G-55PQ50KYX0');
+
+var googleTagManager = '<!-- Google Tag Manager (noscript) -->' +
+    '<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=G-55PQ50KYX0" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>' +
+    '<!-- End Google Tag Manager (noscript) -->';
+$('body').prepend(googleTagManager);
+
+/***********************
+ * Start UDOIT Student *
+ ***********************/
+
+UdoitConfig = {
+  supportedAlternates: ['pdf', 'html', 'mp3', 'epub', 'txt'],
+  allowAlternateRequest: true, // Allows the students to request alternate formats by default.
+  enabledByDefault: true, // Enables the student UI by default.
+}
+
+function loadUdoitScript() {
+  if (!UdoitConfig.toolUri) {
+    UdoitConfig.toolUri = 'https://udoit3.ciditools.com';
+  }
+  let script = document.createElement('script'),
+    firstScript = document.getElementsByTagName('script')[0]
+  script.src = `${UdoitConfig.toolUri}/build/studentController.js`
+  script.crossOrigin = 'anonymous'
+  if (null !== firstScript.parentNode) {
+    firstScript.parentNode.insertBefore(script, firstScript)
+    console.log('udoit student controller added')
+  }
+}
+
+function checkForUdoit() {
+  let body = document.getElementsByTagName('body')[0]
+  if (!body.className.includes('udoit-student-loaded')) {
+    loadUdoitScript()
+    body.className += ' udoit-student-loaded'
+  }
+}
+checkForUdoit()
+/*** END UDOIT Student ***/

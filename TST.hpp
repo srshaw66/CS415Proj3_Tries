@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 struct TSTNode {
     char c;
     bool isEnd;
@@ -28,16 +30,16 @@ public:
     TST(const TST&) = delete;
     TST& operator=(const TST&) = delete;
 
-    void insert(const std::string& word);
+    void insert(const string& word);
 
     // Node holding the last character of q, or nullptr if q is absent.
-    TSTNode* findPrefix(const std::string& q);
+    TSTNode* findPrefix(const string& q);
 
     // True if word was inserted as a complete word (used for flag = 2).
-    bool search(const std::string& word);
+    bool search(const string& word);
 
     // All stored words that have q as a prefix (q itself included if stored).
-    std::vector<std::string> autocomplete(const std::string& q);
+    vector<string> autocomplete(const string& q);
 
     long long nodeCount() const;
     long long spaceUnits() const;   // 3 * nodeCount()
@@ -50,7 +52,7 @@ private:
     long long nodes;
     long long opCount;
 
-    void collect(TSTNode* node, std::string& prefix, std::vector<std::string>& out);
+    void collect(TSTNode* node, string& prefix, vector<string>& out);
     void destroy(TSTNode* node);
 };
 
