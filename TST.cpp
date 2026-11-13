@@ -56,7 +56,21 @@ bool TST::search(const string& word) {
 }
 
 // All stored words that have q as a prefix (q itself included if stored).
-vector<string> TST::autocomplete(const string& q) {}
+vector<string> TST::autocomplete(const string& q) {
+   vector<string> out;
+   TSTNode * node = findPrefix(q);
+
+   if (node == nullptr) {
+    return out;
+   }
+   opCount++;
+   if (node->isEnd) {
+    out.push_back(q);
+   }
+   string prefix = q;
+   collect(node->mid, prefix, out);
+   return out;
+}
 
 long long TST::nodeCount() const {
     return nodes;
