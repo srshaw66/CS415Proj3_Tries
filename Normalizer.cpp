@@ -20,7 +20,9 @@ vector<string> readWords(const string& filename) {
     ifstream inputFile(filename);
     string word;
     while (inputFile >> word) {
-        words.push_back(normalize(word));
+        if (!word.empty()) {
+            words.push_back(normalize(word));
+        }
     }
     return words;
 }
