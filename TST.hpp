@@ -35,6 +35,8 @@ public:
     // Node holding the last character of q, or nullptr if q is absent.
     TSTNode* findPrefix(const string& q);
 
+    const TSTNode* rootNode() const;
+
     // True if word was inserted as a complete word (used for flag = 2).
     bool search(const string& word);
 

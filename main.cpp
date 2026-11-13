@@ -1,37 +1,38 @@
-#include <iostream>
 #include <fstream>
-#include <vector>
+#include <iostream>
 #include <string>
+#include <vector>
+
 #include "Normalizer.hpp"
+#include "tests.hpp"
 
 using namespace std;
 
-//./a.out textfile.txt 
-// or 
-// ./a.out enter
-// -> enter words one by one 
-
 int main(int argc, char* argv[]) {
-    vector<string> wordsInput;
-
-    if (argc > 1) {
-        cout << "Reading words from file: " << argv[1] << endl;
-        wordsInput = readWords(argv[1]);
-        cout << "Finished reading words from file: " << argv[1] << endl;
-
-    } else {
-            cout << "Please enter words: " << endl;
-        while (true) {
-            string word;
-            cin >> word;
-            if (word == "" || word == " ") {
-                break;
-            }
-            wordsInput.push_back(normalize(word));
-        }
+    if (argc != 3) {
+        cerr << "Usage: " << argv[0] << " <input-file> <flag>\n"
+             << "  flag 1: search query strings and show autocomplete results\n"
+             << "  flag 2: search all strings in the input file\n";
+        return 1;
     }
 
+    const string filename = argv[1];
+    const string flag = argv[2];
 
-   
+    if (flag != "1" && flag != "2") {
+        cerr << "Error: flag must be 1 or 2.\n";
+        return 1;
+    }
+
+    ifstream inputFile(filename);
+    if (!inputFile) {
+        cerr << "Error: could not open input file: " << filename << '\n';
+        return 1;
+    }
+
+    vector<string> wordsInput = readWords(filename);
+
+    runTests(wordsInput, stoi(flag));
+
     return 0;
 }
