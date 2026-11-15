@@ -1,11 +1,9 @@
 #include "StandardTrie.hpp"
 
-
 using namespace std;
 
 TrieNode::TrieNode() {
-    // loop through the trie and set every child to nullptr
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
+    for (int i = 0; i < ALPHABET_SIZE; ++i) {
         child[i] = nullptr;
     }
     isEnd = false;
@@ -15,7 +13,6 @@ StandardTrie::StandardTrie() {
     root = new TrieNode();
     nodes = 1;
     opCount = 0;
-
 }
 
 StandardTrie::~StandardTrie() {
@@ -23,20 +20,12 @@ StandardTrie::~StandardTrie() {
 }
 
 
-void StandardTrie::insert(const std::string& word) {
-    /*insert(word):
-    node ← root
-    for each char ch in word:
-        i ← ch - 'a'
-        inspect node.child[i]                       (+1)
-        if node.child[i] is NULL:
-            node.child[i] ← new TrieNode            (+1 create, +1 assign)
-        node ← node.child[i]
-    set node.isEnd ← true                           (+1)*/
+void StandardTrie::insert(std::string& word) {
     TrieNode* node = root;
-    for (char c : word) {
-        int i = c - 'a';
+    for (char character : word) {
+        int i = character - 'a';
         opCount++;
+
         if (node->child[i] == nullptr) {
             node->child[i] = new TrieNode();
             nodes++;
@@ -46,22 +35,14 @@ void StandardTrie::insert(const std::string& word) {
     }
     node->isEnd = true;
     opCount++;
-
 }
 
-// Node reached by following q from the root, or nullptr if q is absent.
-TrieNode* StandardTrie::findPrefix(const std::string& q) {
-    /*findPrefix(q):
-    node ← root
-    for each ch in q:
-        inspect node.child[ch - 'a']                (+1)
-        if NULL: return NULL
-        node ← that child
-    return node*/
-    TrieNode *node = root;
-    for (char c :  q) {
-        int i = c - 'a';
+TrieNode* StandardTrie::findPrefix(std::string& q) {
+    TrieNode* node = root;
+    for (char character : q) {
+        int i = character - 'a';
         opCount++;
+
         if (node->child[i] == nullptr) {
             return nullptr;
         }
@@ -70,68 +51,57 @@ TrieNode* StandardTrie::findPrefix(const std::string& q) {
     return node;
 }
 
-// True if word was inserted as a complete word (used for flag = 2).
-bool StandardTrie::search(const std::string& word) {
-    /*node ← findPrefix(word)
-    if node is NULL: return false
-    opCount += 1                               check end marker
-    return node.isEnd
-*/
-    TrieNode *node = findPrefix(word);
-    if(node == nullptr) {
+bool StandardTrie::search(std::string& word) {
+    TrieNode* node = findPrefix(word);
+
+    if (node == nullptr) {
         return false;
     }
     opCount++;
     return node->isEnd;
 }
 
-// All stored words that have q as a prefix (q itself included if stored).
-std::vector<std::string> StandardTrie::autocomplete(const std::string& q) {
-    /*autocomplete(q):
-    node ← findPrefix(q);  if NULL return empty
-    collect(node, q, out);  return out
-*/
-    TrieNode *node = findPrefix(q);
+std::vector<std::string> StandardTrie::autocomplete(std::string& q) {
+    TrieNode* node = findPrefix(q);
     string s = q;
-    if (node == nullptr) {return {};}
+
+    if (node == nullptr) {
+        return {};
+    }
     std::vector<std::string> out;
     collect(node, s, out);
     return out;
 }
 
-long long StandardTrie::nodeCount() const {
+long long StandardTrie::nodeCount() {
     return nodes;
 }
-// 26 * nodeCount()
-long long StandardTrie::spaceUnits() const {
-    return 26 * nodeCount();
-}   
 
-long long StandardTrie::ops() const {
+long long StandardTrie::spaceUnits() {
+    return 26 * nodeCount();
+}
+
+long long StandardTrie::ops() {
     return opCount;
 }
+
 void StandardTrie::resetOps() {
     opCount = 0;
 }
 
-void StandardTrie::collect(TrieNode* node, std::string& prefix, std::vector<std::string>& out) {
-    /*opCount += 1                               check end marker
-    if node.isEnd:
-        append prefix to out
-    for i in 0..25:
-        opCount += 1                           inspect slot (NULL ones too)
-        if node.child[i] is not NULL:
-            append letter ('a' + i) to prefix
-            collect(node.child[i], prefix, out)
-            remove last letter from prefix     backtrack*/
+void StandardTrie::collect(TrieNode* node, std::string& prefix,
+std::vector<std::string>& out) {
     opCount++;
+
     if (node->isEnd) {
         out.push_back(prefix);
     }
+
     for (size_t i = 0; i < ALPHABET_SIZE; i++) {
         opCount++;
+
         if (node->child[i] != nullptr) {
-            prefix.push_back('a' + i);
+            prefix.push_back(static_cast<char>('a' + i));
             collect(node->child[i], prefix, out);
             prefix.pop_back();
         }
@@ -139,8 +109,10 @@ void StandardTrie::collect(TrieNode* node, std::string& prefix, std::vector<std:
 }
 
 void StandardTrie::destroy(TrieNode* node) {
-    if (node == nullptr) {return;}
-    // post order destroy, children first. 
+    if (node == nullptr) {
+        return;
+    }
+
     for (size_t i = 0; i < ALPHABET_SIZE; ++i) {
         destroy(node->child[i]);
     }

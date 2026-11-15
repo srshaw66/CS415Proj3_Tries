@@ -10,7 +10,7 @@
 
 using namespace std;
 
-static void printResults(const vector<string>& results) {
+static void printResults(vector<string>& results) {
     if (results.empty()) {
         cout << "(none)";
         return;
@@ -24,26 +24,24 @@ static void printResults(const vector<string>& results) {
     }
 }
 
-static void printBuildResults(const StandardTrie& trie,
-                              const TST& tst,
-                              long long standardBuildOps,
-                              long long tstBuildOps) {
+static void printBuildResults(StandardTrie& trie, TST& tst,
+long long standardBuildOps, long long tstBuildOps) {
     cout << "Time taken to build the standard Trie is "
-         << standardBuildOps
-         << " operations and space occupied by it is "
-         << trie.spaceUnits() << " pointer units\n";
+       << standardBuildOps
+       << " operations and space occupied by it is "
+       << trie.spaceUnits() << " pointer units" << endl;
 
     cout << "Time taken to build the BST based Trie is "
-         << tstBuildOps
-         << " operations and space occupied by it is "
-         << tst.spaceUnits() << " pointer units\n";
+       << tstBuildOps
+       << " operations and space occupied by it is "
+       << tst.spaceUnits() << " pointer units" << endl;
 }
 
 static void runQueryCase(StandardTrie& trie, TST& tst) {
     string query;
 
     while (true) {
-        cout << "\nEnter search string: ";
+        cout << endl << "Enter search string: ";
         if (!(cin >> query)) {
             break;
         }
@@ -51,70 +49,69 @@ static void runQueryCase(StandardTrie& trie, TST& tst) {
 
         trie.resetOps();
         trie.search(query);
-        const long long standardSearchOps = trie.ops();
+        long long standardSearchOps = trie.ops();
 
         trie.resetOps();
-        const vector<string> standardResults = trie.autocomplete(query);
-        const long long standardAutocompleteOps = trie.ops();
+        vector<string> standardResults = trie.autocomplete(query);
+        long long standardAutocompleteOps = trie.ops();
 
         tst.resetOps();
         tst.search(query);
-        const long long tstSearchOps = tst.ops();
+        long long tstSearchOps = tst.ops();
 
         tst.resetOps();
-        const vector<string> tstResults = tst.autocomplete(query);
-        const long long tstAutocompleteOps = tst.ops();
+        vector<string> tstResults = tst.autocomplete(query);
+        long long tstAutocompleteOps = tst.ops();
 
         cout << "Time taken to search in the standard Trie is "
-             << standardSearchOps << " operations\n";
+       << standardSearchOps << " operations" << endl;
         cout << "Auto-complete results using standard Trie are: ";
         printResults(standardResults);
-        cout << '\n';
+        cout << endl;
         cout << "Time taken to find auto-complete results in the standard Trie is "
-             << standardAutocompleteOps << " operations\n\n";
+       << standardAutocompleteOps << " operations" << endl << endl;
 
         cout << "Time taken to search in the BST based Trie is "
-             << tstSearchOps << " operations\n";
+       << tstSearchOps << " operations" << endl;
         cout << "Auto-complete results using BST based Trie are: ";
         printResults(tstResults);
-        cout << '\n';
+        cout << endl;
         cout << "Time taken to find auto-complete results in the BST based Trie is "
-             << tstAutocompleteOps << " operations\n";
+       << tstAutocompleteOps << " operations" << endl;
     }
 }
 
-static void runSearchAllCase(StandardTrie& trie,
-                             TST& tst,
-                             const vector<string>& wordsInput) {
+static void runSearchAllCase(StandardTrie& trie, TST& tst,
+vector<string>& wordsInput) {
     trie.resetOps();
-    for (const string& word : wordsInput) {
+    for (string& word : wordsInput) {
         trie.search(word);
     }
-    const long long standardSearchAllOps = trie.ops();
+    long long standardSearchAllOps = trie.ops();
 
     tst.resetOps();
-    for (const string& word : wordsInput) {
+    for (string& word : wordsInput) {
         tst.search(word);
     }
-    const long long tstSearchAllOps = tst.ops();
+    long long tstSearchAllOps = tst.ops();
 
     cout << "Time taken to search all the strings in the standard Trie is "
-         << standardSearchAllOps << " operations\n";
+       << standardSearchAllOps << " operations" << endl;
     cout << "Time taken to search all the strings in the BST based Trie is "
-         << tstSearchAllOps << " operations\n";
+       << tstSearchAllOps << " operations" << endl;
 }
 
-void runTests(const vector<string>& wordsInput, int flag) {
+void runTests(vector<string>& wordsInput, int flag) {
     StandardTrie trie;
     TST tst;
 
-    for (const string& word : wordsInput) {
+    for (string& word : wordsInput) {
         trie.insert(word);
         tst.insert(word);
     }
 
-    const long long standardBuildOps = trie.ops();
-    const long long tstBuildOps = tst.ops();
+    long long standardBuildOps = trie.ops();
+    long long tstBuildOps = tst.ops();
 
     printBuildResults(trie, tst, standardBuildOps, tstBuildOps);
 

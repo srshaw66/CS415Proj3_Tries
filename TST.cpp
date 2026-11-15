@@ -3,8 +3,8 @@
 using namespace std;
 
 TSTNode::TSTNode(char ch) {
-    c = ch;
-    isEnd = false;
+    character = ch;
+    isWordEnd = false;
     left = nullptr;
     mid = nullptr;
     right = nullptr;
@@ -12,188 +12,144 @@ TSTNode::TSTNode(char ch) {
 
 TST::TST() {
     root = nullptr;
-    nodes = 0;
+    totalNodes = 0;
     opCount = 0;
 }
 
-TST::~TST() {
-    destroy(root);
-}
 
-void TST::insert(const string& word) {
-    /*if word is empty: return
-    link ← the root pointer itself     (a reference to the pointer, not the node)
-    i ← 0
-    loop:
-        if link is NULL:
-            link ← new TSTNode(word[i])
-            nodes += 1;  opCount += 2              create + assign
-        node ← link
-        opCount += 1                               compare word[i] with node.c
-        if word[i] < node.c:   link ← node.left
-        elif word[i] > node.c: link ← node.right
-        else:                                      match
-            if i is the last index:
-                node.isEnd ← true;  opCount += 1;  return
-            i += 1
-            link ← node.mid*/
-
+void TST::insert(string& word) {
     if (word.empty()) {
         return;
     }
-    TSTNode** link = &root;
-    size_t i = 0;
+
+    TSTNode** branchPointer = &root;
+    size_t charIndex = 0;
+
     while (true) {
-        if (*link == nullptr) {
-            *link = new TSTNode(word[i]);
-            nodes++;
+        if (*branchPointer == nullptr) {
+            *branchPointer = new TSTNode(word[charIndex]);
+            totalNodes++;
             opCount += 2;
         }
-        TSTNode* node = *link;
+        TSTNode* curNode = *branchPointer;
         opCount++;
-        if (word[i] < node->c) {
-            link = &node->left;
-        } else if (word[i] > node->c) {
-            link = &node->right;
+
+        if (word[charIndex] < curNode->character) {
+            branchPointer = &curNode->left;
+        } else if (word[charIndex] > curNode->character) {
+            branchPointer = &curNode->right;
         } else {
-            if (i == word.size() - 1) {
-                node->isEnd = true;
+            if (charIndex == word.size() - 1) {
+                curNode->isWordEnd = true;
                 opCount++;
                 return;
             }
-            i++;
-            link = &node->mid;
+            charIndex++;
+            branchPointer = &curNode->mid;
         }
     }
 }
 
 
-// Node holding the last character of q, or nullptr if q is absent.
-TSTNode* TST::findPrefix(const string& q) {
-    /*if q is empty: return NULL
-    node ← root;  i ← 0
-    while node is not NULL:
-        opCount += 1                               compare q[i] with node.c
-        if q[i] < node.c:   node ← node.left
-        elif q[i] > node.c: node ← node.right
-        else:
-            if i is the last index: return node
-            i += 1
-            node ← node.mid
-    return NULL*/
-    if (q.empty()) {
+TSTNode* TST::findPrefix(string& prefix) {
+    if (prefix.empty()) {
         return nullptr;
     }
+
     TSTNode* node = root;
-    size_t i = 0;
+    size_t charIndex = 0;
+
     while (node != nullptr) {
         opCount++;
-        if (q[i] < node->c) {
+
+        if (prefix[charIndex] < node->character) {
             node = node->left;
-        } else if (q[i] > node->c) {
+        } else if (prefix[charIndex] > node->character) {
             node = node->right;
         } else {
-            if (i == q.size() - 1) {
+            if (charIndex == prefix.size() - 1) {
                 return node;
             }
-            i++;
+            charIndex++;
             node = node->mid;
         }
     }
     return nullptr;
 }
 
-const TSTNode* TST::rootNode() const {
-    return root;
-}
-
-// True if word was inserted as a complete word (used for flag = 2).
-bool TST::search(const string& word) {
+bool TST::search(string& word) {
     TSTNode* node = findPrefix(word);
+
     if (node == nullptr) {
         return false;
     }
 
     opCount++;
-    return node->isEnd;
+    return node->isWordEnd;
 }
 
-// All stored words that have q as a prefix (q itself included if stored).
-vector<string> TST::autocomplete(const string& q) {
-    /*autocomplete(q):
-    if q is empty:
-        collect(root, "", out)
-        return out
-    node ← findPrefix(q)
-    if node is NULL: return empty
-    opCount += 1                               check end marker
-    if node.isEnd: append q to out
-    collect(node.mid, q, out)
-    return out
-    */
-    vector<string> out;
+vector<string> TST::autocomplete(string& prefix) {
+    vector<string> results;
 
-    if (q.empty()) {
-        string prefix;
-        collect(root, prefix, out);
-        return out;
+    if (prefix.empty()) {
+        string currentPrefix;
+        collectWords(root, currentPrefix, results);
+        return results;
     }
 
-    TSTNode* node = findPrefix(q);
+    TSTNode* node = findPrefix(prefix);
+
     if (node == nullptr) {
-        return out;
+        return results;
     }
 
-    string prefix = q;
-    opCount++; // check end marker
-    if (node->isEnd) {
-        out.push_back(prefix);
+    string currentPrefix = prefix;
+    opCount++;
+
+    if (node->isWordEnd) {
+        results.push_back(currentPrefix);
     }
 
-    collect(node->mid, prefix, out);
-    return out;
+    collectWords(node->mid, currentPrefix, results);
+    return results;
 }
 
-long long TST::nodeCount() const {
-    return nodes;
+long long TST::nodeCount() {
+    return totalNodes;
 }
-long long TST::spaceUnits() const {
+
+long long TST::spaceUnits() {
     return 3 * nodeCount();
 }
 
-long long TST::ops() const {
+long long TST::ops() {
     return opCount;
 }
+
 void TST::resetOps() {
     opCount = 0;
 }
 
-// in-order traversal = alphabetical output
-void TST::collect(TSTNode* node, string& prefix, vector<string>& out) {
-    /*if node is NULL: return
-    opCount += 1                                   inspect this node
-    collect(node.left, prefix, out)
-    append node.c to prefix
-    opCount += 1                                   check end marker
-    if node.isEnd: append prefix to out
-    collect(node.mid, prefix, out)
-    remove last char from prefix
-    collect(node.right, prefix, out)*/
+void TST::collectWords(TSTNode* node, string& currentPrefix,
+vector<string>& results) {
     if (node == nullptr) {
         return;
     }
+
     opCount++;
-    collect(node->left, prefix, out);
-    prefix += node->c;
+
+    collectWords(node->left, currentPrefix, results);
+    currentPrefix += node->character;
     opCount++;
-    if (node->isEnd) {
-        out.push_back(prefix);
+
+    if (node->isWordEnd) {
+        results.push_back(currentPrefix);
     }
-    collect(node->mid, prefix, out);
-    prefix.pop_back();
-    collect(node->right, prefix, out);
+    collectWords(node->mid, currentPrefix, results);
+    currentPrefix.pop_back();
+    collectWords(node->right, currentPrefix, results);
 }
-// post-order 
+
 void TST::destroy(TSTNode* node) {
     if (node == nullptr) {
         return;

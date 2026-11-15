@@ -11,13 +11,14 @@ using namespace std;
 int main(int argc, char* argv[]) {
     if (argc != 3) {
         cerr << "Usage: " << argv[0] << " <input-file> <flag>\n"
-             << "  flag 1: search query strings and show autocomplete results\n"
+             << "  flag 1: search query strings and show autocomplete "
+                "results\n"
              << "  flag 2: search all strings in the input file\n";
         return 1;
     }
 
-    const string filename = argv[1];
-    const string flag = argv[2];
+    string filename = argv[1];
+    string flag = argv[2];
 
     if (flag != "1" && flag != "2") {
         cerr << "Error: flag must be 1 or 2.\n";

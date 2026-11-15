@@ -7,8 +7,8 @@
 using namespace std;
 
 struct TSTNode {
-    char c;
-    bool isEnd;
+    char character;
+    bool isWordEnd;
     TSTNode* left;
     TSTNode* mid;
     TSTNode* right;
@@ -16,45 +16,37 @@ struct TSTNode {
     explicit TSTNode(char ch);
 };
 
-// BST-based Trie (Ternary Search Tree). Space = 3 * nodeCount() pointer units.
-// Operation counting rules (see report):
-//   +1 per character comparison with a TST node (one 3-way compare = 1)
-//   +1 per node created, +1 per pointer assigned
-//   +1 per word-ending marker checked or updated
-//   autocomplete: +1 per child node inspected during traversal
 class TST {
 public:
     TST();
-    ~TST();
+    ~TST() { destroy(root); }
 
-    TST(const TST&) = delete;
-    TST& operator=(const TST&) = delete;
+    TST(TST&) = delete;
+    TST& operator=(TST&) = delete;
 
-    void insert(const string& word);
+    void insert(string& word);
 
-    // Node holding the last character of q, or nullptr if q is absent.
-    TSTNode* findPrefix(const string& q);
+    TSTNode* findPrefix(string& prefix);
 
-    const TSTNode* rootNode() const;
+    bool search(string& word);
 
-    // True if word was inserted as a complete word (used for flag = 2).
-    bool search(const string& word);
+    vector<string> autocomplete(string& prefix);
 
-    // All stored words that have q as a prefix (q itself included if stored).
-    vector<string> autocomplete(const string& q);
+    long long nodeCount();
 
-    long long nodeCount() const;
-    long long spaceUnits() const;   // 3 * nodeCount()
+    long long spaceUnits();
 
-    long long ops() const;
+    long long ops();
+
     void resetOps();
 
 private:
     TSTNode* root;
-    long long nodes;
+    long long totalNodes;
     long long opCount;
 
-    void collect(TSTNode* node, string& prefix, vector<string>& out);
+    void collectWords(TSTNode* node, string& currentPrefix,
+vector<string>& results);
     void destroy(TSTNode* node);
 };
 

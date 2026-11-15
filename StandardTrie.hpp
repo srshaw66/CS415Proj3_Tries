@@ -6,7 +6,7 @@
 
 using namespace std;
 
-const int ALPHABET_SIZE = 26;
+enum { ALPHABET_SIZE = 26 };
 
 struct TrieNode {
     TrieNode* child[ALPHABET_SIZE];
@@ -15,34 +15,28 @@ struct TrieNode {
     TrieNode();
 };
 
-// Array-based Trie. Space = 26 * nodeCount() pointer units.
-// Operation counting rules (see report):
-//   +1 per child array position inspected (including NULL slots in autocomplete)
-//   +1 per node created, +1 per pointer assigned
-//   +1 per word-ending marker checked or updated
 class StandardTrie {
 public:
     StandardTrie();
     ~StandardTrie();
 
-    StandardTrie(const StandardTrie&) = delete;
-    StandardTrie& operator=(const StandardTrie&) = delete;
+    StandardTrie(StandardTrie&) = delete;
+    StandardTrie& operator=(StandardTrie&) = delete;
 
-    void insert(const string& word);
+    void insert(string& word);
 
-    // Node reached by following q from the root, or nullptr if q is absent.
-    TrieNode* findPrefix(const string& q);
+    TrieNode* findPrefix(string& q);
 
-    // True if word was inserted as a complete word (used for flag = 2).
-    bool search(const string& word);
+    bool search(string& word);
 
-    // All stored words that have q as a prefix (q itself included if stored).
-    vector<string> autocomplete(const string& q);
+    vector<string> autocomplete(string& q);
 
-    long long nodeCount() const;
-    long long spaceUnits() const;   // 26 * nodeCount()
+    long long nodeCount();
 
-    long long ops() const;
+    long long spaceUnits();
+
+    long long ops();
+
     void resetOps();
 
 private:

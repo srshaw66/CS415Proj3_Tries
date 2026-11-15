@@ -6,6 +6,6 @@
 
 using namespace std;
 
-void runTests(const vector<string>& wordsInput, int flag);
+void runTests(vector<string>& wordsInput, int flag);
 
-#endif // TESTS_HPP
+#endif
